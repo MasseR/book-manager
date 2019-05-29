@@ -1,5 +1,6 @@
-{-# LANGUAGE RecordWildCards  #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE TypeApplications  #-}
 module Server
   ( application
   ) where
@@ -9,6 +10,7 @@ import           Control.Monad.Except   (ExceptT (..))
 import           Control.Monad.Reader
 import qualified Data.Text              as T
 import           Data.Version           (showVersion)
+import           MyPrelude
 import qualified Paths_backend
 import           Servant
 import           Servant.API.Generic

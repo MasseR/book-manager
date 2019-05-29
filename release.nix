@@ -8,6 +8,18 @@ let
     rev = "34fe7d61b3f387b81aa748294ac8d993243f53b4";
     sha256 = "0qdh5qdk23vcp1yp910zgw2hs4zpbx9ig25xgaax0iwj2m1ifh5x";
   };
+  ghcjs-dom = nixpkgs.fetchFromGitHub {
+    owner = "ghcjs";
+    repo = "ghcjs-dom";
+    rev = "b8e483adef0cea66d081c1a014e87c6f99eb29fc";
+    sha256 = "06qlbbhjd0mlv5cymp5q0rb69a333l0fcif5zwa83h94dh25c1g7";
+  };
+  jsaddle-dom = nixpkgs.fetchFromGitHub {
+    owner = "ghcjs";
+    repo = "jsaddle-dom";
+    rev = "dd1cc363e824e888ae29d61ac54d0e226d81fcdf";
+    sha256 = "1lxgrjik3ldri54hmbbxn62sx46hrgnppmggdrhsaj4kzk8ysgj7";
+  };
   config = {
     packageOverrides = pkgs: with pkgs.haskell.lib;  with pkgs.lib; {
       haskell = pkgs.haskell // {
@@ -15,6 +27,10 @@ let
           ghccustom = pkgs.haskell.packages.ghc843.override {
             overrides = self: super: {
               jsaddle-warp = dontCheck (super.callPackage (jsaddle + "/jsaddle-warp") {});
+              ghcjs-dom = dontCheck (import ghcjs-dom super).ghcjs-dom;
+              ghcjs-dom-jsaddle = dontCheck (import ghcjs-dom super).ghcjs-dom-jsaddle;
+              ghcjs-dom-jsffi = dontCheck (import ghcjs-dom super).ghcjs-dom-jsffi;
+              jsaddle-dom = super.callPackage jsaddle-dom {};
               # jsaddle-warp = super.callPackage ./jsaddle-warp-ghcjs.nix {};
               jsaddle = dontCheck (super.callPackage (jsaddle + "/jsaddle") {});
             };
@@ -33,6 +49,8 @@ let
               scientific = dontCheck (super.scientific);
               servant = dontCheck (super.servant);
               jsaddle-warp = super.callPackage ./jsaddle-warp-ghcjs.nix {};
+              jsaddle = dontCheck (super.callPackage (jsaddle + "/jsaddle") {});
+              jsaddle-dom = super.callPackage jsaddle-dom {};
               ghc = overrideDerivation (super.ghc.override {
                 ghcjsSrc = pkgs.fetchgit {
                   url = "https://github.com/ghcjs/ghcjs.git";
@@ -54,7 +72,8 @@ let
     inherit (pinnedVersion) rev sha256;
   }) { inherit config; };
   ghc = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghccustom; };
-  ghcjs = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
+  # ghcjs = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
+  ghcjs = import ./default.nix { lib = pinnedPkgs.lib; nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
   inherit (pinnedPkgs) pkgs;
 
   in

@@ -37,7 +37,7 @@ let
       ghcid
       cabal-install
       hasktags
-      (haskellPackages'.ghcWithHoogle (pkgs: pkg.buildInputs ++ pkg.propagatedBuildInputs))
+      (haskellPackages'.ghcWithPackages (pkgs: pkg.buildInputs ++ pkg.propagatedBuildInputs))
     ];
   in
   {
