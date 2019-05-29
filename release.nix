@@ -54,7 +54,7 @@ let
     inherit (pinnedVersion) rev sha256;
   }) { inherit config; };
   ghc = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghccustom; };
-  ghcjs = import ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
+  ghcjs = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
   inherit (pinnedPkgs) pkgs;
 
   in
