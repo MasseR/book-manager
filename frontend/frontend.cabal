@@ -22,9 +22,22 @@ executable frontend
   -- other-extensions:
   build-depends:       base >=4.11 && <4.13
                      , api
-                     , miso
+                     , common
+                     , generic-lens
                      , jsaddle-warp
-                     , jsaddle-dom
+                     , lens
+                     , miso
                      , mtl
+                     , servant
+                     , jsaddle-dom
+                     -- , jsaddle-dom
+                     -- , ghcjs-dom
+                     -- , servant-client-ghcjs
+  -- if (impl(ghcjs -any) && flag(jsffi))
+  --   build-depends:
+  --     ghcjs-dom-jsffi ==0.9.4.0
+  -- else
+  --   build-depends:
+  --     jsaddle-dom
   hs-source-dirs:      src
   default-language:    Haskell2010

@@ -27,13 +27,10 @@ let
           ghccustom = pkgs.haskell.packages.ghc843.override {
             overrides = self: super: {
               jsaddle-warp = dontCheck (super.callPackage (jsaddle + "/jsaddle-warp") {});
-              ghcjs-dom = dontCheck (import ghcjs-dom super).ghcjs-dom;
-              ghcjs-dom-jsaddle = dontCheck (import ghcjs-dom super).ghcjs-dom-jsaddle;
-              ghcjs-dom-jsffi = dontCheck (import ghcjs-dom super).ghcjs-dom-jsffi;
               jsaddle-dom = super.callPackage jsaddle-dom {};
               # jsaddle-warp = super.callPackage ./jsaddle-warp-ghcjs.nix {};
               jsaddle = dontCheck (super.callPackage (jsaddle + "/jsaddle") {});
-            };
+            } // import ghcjs-dom super;
           };
           ghcjscustom = pkgs.haskell.packages.ghcjs84.override {
             overrides = self: super: {
@@ -59,7 +56,7 @@ let
                   fetchSubmodules = true;
                 };
               }) (drv: { patches = (drv.patches or []) ++ [ ./ghcjs.patch ]; });
-            };
+            } // import ghcjs-dom super;
           };
         };
       };
