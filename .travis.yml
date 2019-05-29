@@ -1,0 +1,16 @@
+language: nix
+
+os:
+  - linux
+
+before_script:
+  - mkdir -m 0755 -p /nix/var/nix/{profiles,gcroots}/per-user/$USER
+  - mkdir -p ~/.config/nixpkgs
+
+env:
+  - NIXPKGS=19.03
+  - NIXPKGS=unstable
+
+script:
+  - nix run -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-$NIXPKGS.tar.gz nixpkgs.haskellPackages.hlint -c hlint src
+  - nix build -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-$NIXPKGS.tar.gz --option binary-caches "https://masser-ebook-manager.cachix.org https://cache.nixos.org" -f ./release.nix ghc.backend ghcjs.frontend
