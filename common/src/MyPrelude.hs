@@ -13,6 +13,7 @@ module MyPrelude
 import           Control.Monad.Reader as X
 import qualified Data.ByteString      as B
 import qualified Data.ByteString.Lazy as LB
+import           Data.Maybe           as X (fromMaybe, maybe)
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as T
 import           Prelude              as X hiding (putStr, putStrLn, readFile)
