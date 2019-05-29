@@ -21,6 +21,7 @@ in
     frontend = ./frontend;
   };
   overrides = self: super: {
+    miso = miso-jsaddle super;
   };
   tools = with haskellPackages; [
     ghcid
