@@ -1,5 +1,5 @@
+{-# LANGUAGE ConstraintKinds   #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE ConstraintKinds #-}
 module DB.Internal
   ( SQL.Query(..)
   , SQL.Only(..)
@@ -7,6 +7,7 @@ module DB.Internal
   , SQL.withConnection
   , SQL.ToRow(..)
   , SQL.ToField(..)
+  , SQL.FromField(..)
   , HasDB(..)
   , WithDB
   , execute_
@@ -14,10 +15,11 @@ module DB.Internal
   , query )
   where
 
-import qualified Database.SQLite.Simple as SQL
-import qualified Database.SQLite.Simple.ToField as SQL
+import qualified Database.SQLite.Simple           as SQL
+import qualified Database.SQLite.Simple.FromField as SQL
+import qualified Database.SQLite.Simple.ToField   as SQL
 
-import MyPrelude
+import           MyPrelude
 
 class HasDB a where
   getConnection :: a -> SQL.Connection

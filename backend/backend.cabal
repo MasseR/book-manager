@@ -43,5 +43,6 @@ executable backend
                      , servant-auth
                      , servant-auth-server
                      , jose
+                     , exceptions
   hs-source-dirs:      src
   default-language:    Haskell2010

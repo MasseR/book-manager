@@ -11,7 +11,7 @@ import           Types
 
 import           Network.Wai.Handler.Warp    (run)
 import           Network.Wai.Middleware.Cors
-import           Servant.Auth.Server       (generateKey)
+import           Servant.Auth.Server         (generateKey)
 
 main :: IO ()
 main = withConnection "/tmp/book-manager.sqlite" $ \connection -> do

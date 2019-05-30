@@ -7,13 +7,18 @@ module MyPrelude
   , putStrLn
   , putStr
   , hush
+  , ifM
+  , boolM
+  , whenM
+  , unlessM
   )
   where
 
 import           Control.Monad.Reader as X
+import           Data.Bool            as X (bool)
 import qualified Data.ByteString      as B
 import qualified Data.ByteString.Lazy as LB
-import           Data.Maybe           as X (catMaybes, fromMaybe, maybe)
+import           Data.Maybe           as X (catMaybes, fromMaybe, isJust, maybe)
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as T
 import           Prelude              as X hiding (putStr, putStrLn, readFile)
@@ -33,3 +38,18 @@ tshow = T.pack . show
 
 hush :: Either e a -> Maybe a
 hush = either (const Nothing) Just
+
+boolM :: Monad m => m a -> m a -> m Bool -> m a
+boolM f t = bool f t <=< id
+
+ifM :: Monad m => m Bool -> m a -> m a -> m a
+ifM b t f = do
+  b' <- b
+  if b' then t else f
+
+whenM :: Monad m => m Bool -> m () -> m ()
+whenM b t = ifM b t (pure ())
+
+unlessM :: Monad m => m Bool -> m () -> m ()
+unlessM b = ifM b (pure ())
+

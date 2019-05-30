@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE LambdaCase        #-}
+{-# LANGUAGE NamedFieldPuns    #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
@@ -8,6 +9,7 @@ module DB.Users
   ( User(..)
   , insertUser
   , getUser
+  , hashPassword
   , validateUser )
   where
 
@@ -28,19 +30,30 @@ instance ToField Hash where
 instance ToField Username where
   toField (Username u) = toField u
 
+instance FromField Hash where
+  fromField f = Hash <$> fromField f
+
+instance FromField Username where
+  fromField f = Username <$> fromField f
+
 hashPassword :: MonadRandom m => User Password -> m (User Hash)
 hashPassword User{secret=Password p,..} = do
   secret <- Hash <$> BCrypt.hashPassword 6 (encodeUtf8 p)
   pure User{..}
 
-insertUser :: (MonadRandom m, WithDB env m) => User Password -> m ()
-insertUser = execute "insert into users (username, hash) values (?, ?)" <=< hashPassword
+insertUser :: (MonadRandom m, WithDB env m) => User Hash -> m ()
+insertUser user@User{username} =
+  unlessM (isJust <$> getUser username) (insert user)
+  where
+    insert = execute "insert into users (username, hash) values (?, ?)"
 
 getUser :: WithDB env m => Username -> m (Maybe (User Hash))
-getUser = undefined
+getUser username = query "select hash from users where username = ?" (Only username) >>= \case
+  [Only h] -> pure (Just (User username h))
+  _ -> pure Nothing
 
 validateHash :: Hash -> Password -> Bool
-validateHash (Hash a) (Password b) = BCrypt.validatePassword a (encodeUtf8 b)
+validateHash (Hash h) (Password p) = BCrypt.validatePassword (encodeUtf8 p) h
 
 validateUser :: User Hash -> Password -> Bool
 validateUser User{secret} = validateHash secret

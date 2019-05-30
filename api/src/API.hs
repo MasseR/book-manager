@@ -12,12 +12,15 @@ import           GHC.Generics        (Generic)
 import           Servant.API
 import           Servant.API.Generic
 
+import qualified API.Users           as Users
+
 newtype Version = Version { version :: Text } deriving (Show, Generic, Eq)
 
 instance ToJSON Version
 
 instance FromJSON Version
 
-newtype API route =
-  API { getVersion :: route :- "version" :>  Get '[JSON] Version }
+data API route =
+  API { getVersion :: route :- "version" :>  Get '[JSON] Version
+      , users      :: route :- "users" :> ToServant Users.API AsApi  }
                deriving (Generic)

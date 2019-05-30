@@ -7,9 +7,12 @@ import           MyPrelude
 import           Data.Aeson
 import           GHC.Generics
 
-newtype Password = Password Text
+newtype Password = Password Text deriving (ToJSON, FromJSON)
 
-data Hidden = Hidden deriving (Generic)
+data Hidden = Hidden deriving (Generic, Show)
+
+instance ToJSON Hidden
+instance FromJSON Hidden
 
 newtype Hash = Hash ByteString
 
@@ -19,8 +22,7 @@ newtype Username = Username Text deriving (ToJSON, FromJSON, Show, Eq)
 data User p =
   User { username :: Username
        , secret   :: p }
-            deriving (Generic)
+            deriving (Generic, Show)
 
 instance ToJSON p => ToJSON (User p)
 instance FromJSON p => FromJSON (User p)
-

@@ -1,20 +1,32 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE TypeFamilies      #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-} -- orphan instances because servant-auth-server has the classes I need
 module Server.Auth where
 
+import           Data.Bool           (bool)
+import           Data.Text.Encoding  (decodeUtf8)
 import           Servant.Auth.Server
-import Data.Text.Encoding (decodeUtf8)
-import Data.Bool (bool)
 
 
-import MyPrelude
-import Types
-import Data.Model.User
-import DB.Users
+import           Data.Model.User
+import           DB.Users
+import           MyPrelude
+import           Types
 
+type instance BasicAuthCfg = BasicAuthData -> IO (AuthResult (User Hidden))
+
+instance FromBasicAuthData (User Hidden) where
+  fromBasicAuthData authData authCheckFunction = authCheckFunction authData
+
+instance FromJWT (User Hidden)
+instance ToJWT (User Hidden)
 
 authenticate :: App -> BasicAuthData -> IO (AuthResult (User Hidden))
-authenticate app (BasicAuthData u p) = flip runReaderT app $
+authenticate app (BasicAuthData u p) = flip runReaderT app $ do
+  putStrLn "foo"
   maybe NoSuchUser verifyUser <$> getUser (Username (decodeUtf8 u))
   where
     validate user = validateUser user (Password (decodeUtf8 p))

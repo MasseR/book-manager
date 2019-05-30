@@ -36,6 +36,7 @@ let
       nixpkgs.binutils-unwrapped
       ghcid
       cabal-install
+      hlint
       hasktags
       (haskellPackages'.ghcWithPackages (pkgs: pkg.buildInputs ++ pkg.propagatedBuildInputs))
     ];

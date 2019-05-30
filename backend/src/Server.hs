@@ -26,10 +26,13 @@ import           Data.Model.User
 import           Server.Auth
 import           Types
 
+import qualified Server.Users           as Users
+
 handler :: API (AsServerT AppM)
 handler = API {..}
   where
     getVersion = pure (Version (T.pack . showVersion $ Paths_backend.version))
+    users = toServant Users.handler
 
 api :: Proxy (ToServantApi API)
 api = genericApi @API Proxy
