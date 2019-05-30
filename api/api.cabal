@@ -18,11 +18,14 @@ extra-source-files:  CHANGELOG.md
 
 library
   exposed-modules:     API
+                     , Data.Model.User
   -- other-modules:
   -- other-extensions:
   build-depends:       base >=4.11 && <4.13
                      , servant
                      , text
                      , aeson
+                     , common
+                     , cryptonite
   hs-source-dirs:      src
   default-language:    Haskell2010
