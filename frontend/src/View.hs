@@ -28,4 +28,7 @@ baseView = Page { .. }
     footer _model = div_ [] [text "footer"]
 
 renderView :: Page model a -> model -> View a
-renderView _ _model = div_ [] []
+renderView Page{..} model =
+  div_ [] [ div_ [class_ "header"] [ header model ]
+          , div_ [class_ "content"] [ content model ]
+          , div_ [class_ "footer"] [ footer model ] ]
