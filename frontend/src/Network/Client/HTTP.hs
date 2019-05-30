@@ -1,12 +1,13 @@
-{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE NoImplicitPrelude          #-}
+{-# LANGUAGE TypeApplications           #-}
 module Network.Client.HTTP where
 
-import MyPrelude
+import           GHC.Generics                (Generic)
 import           JSDOM.Custom.XMLHttpRequest
-import           JSDOM.Types (MonadDOM)
-import GHC.Generics (Generic)
+import           JSDOM.Types                 (MonadDOM)
+import           MyPrelude
 
 newtype Response a =
   Response { content :: Maybe a } deriving (Generic, Functor, Show)
