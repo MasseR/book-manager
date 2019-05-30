@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE NoImplicitPrelude          #-}
@@ -11,16 +12,23 @@ import           JSDOM.Custom.XMLHttpRequest
 import           JSDOM.Types                 (MonadDOM)
 import           MyPrelude
 
-newtype Response a =
-  Response { content :: Maybe a } deriving (Generic, Functor, Show)
+data Response a =
+  Response { content :: Maybe a
+           , status  :: Word }
+                deriving (Generic, Functor, Show)
 
 responseBody :: Monoid a => Lens' (Response a) a
 responseBody = lens (fromMaybe mempty . content) (\r x -> r{content=Just x})
+
+responseStatus :: Lens' (Response a) Word
+responseStatus = lens status (\r x -> r{status = x})
 
 get :: MonadDOM m => String -> m (Response ByteString)
 get url = do
   req <- newXMLHttpRequest
   openSimple @_ @String req "GET" url
   send req
-  Response . fmap encodeUtf8 <$> getResponseText req
+  Response
+    <$> (fmap encodeUtf8 <$> getResponseText req)
+    <*> getStatus req
 
