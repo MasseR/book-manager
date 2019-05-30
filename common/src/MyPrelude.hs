@@ -16,13 +16,15 @@ module MyPrelude
   where
 
 import           Control.Monad.Reader as X
+import           Data.Bifunctor       as X
 import           Data.Bool            as X (bool)
 import qualified Data.ByteString      as B
 import qualified Data.ByteString.Lazy as LB
 import           Data.Maybe           as X (catMaybes, fromMaybe, isJust, maybe)
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as T
-import           Prelude              as X hiding (putStr, putStrLn, readFile, print)
+import           Prelude              as X hiding (print, putStr, putStrLn,
+                                            readFile)
 import           System.Directory     as X (getDirectoryContents)
 import           System.FilePath      as X
 import           Text.Read            as X (readMaybe)

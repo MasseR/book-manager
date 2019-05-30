@@ -27,13 +27,13 @@ import           View                             (renderView)
 import qualified Handler.Home                     as Home
 import qualified Handler.Login                    as Login
 
-type Route = Home.Route Action :<|> Login.Route Action
+type Route = Home.Route Action :<|> Login.Route
 
 goHome :: Action
 goHome = goto @(Home.Route Action) @Route Proxy Proxy
 
 goLogin :: Action
-goLogin = goto @(Login.Route Action) @Route Proxy Proxy
+goLogin = goto @Login.Route @Route Proxy Proxy
 
 goto :: (IsElem endpoint api, HasLink endpoint, MkLink endpoint Link ~ Link) => Proxy api -> Proxy endpoint -> Action
 goto a b = ChangeURI (linkURI (safeLink a b))
@@ -44,6 +44,7 @@ data Action = Init
             | ChangeURI URI
             | UpdateVersion (HTTP.Response (Maybe Version))
             | UpdateLoginStatus (HTTP.Response ByteString)
+            | LoginAction Login.Action
             | NoOp
 
 updateModel :: Model -> Action -> Effect Action Model
@@ -59,6 +60,7 @@ updateModel m = \case
   UpdateLoginStatus HTTP.Response{status=200} -> m <# pure goHome
   UpdateLoginStatus HTTP.Response{status=401} -> m <# pure goLogin
   UpdateLoginStatus HTTP.Response{status=_} -> noEff m
+  LoginAction act -> bimap LoginAction id (Login.updateModel m act)
 
 getVersion :: MonadDOM m => m Action
 getVersion = do
@@ -74,7 +76,10 @@ viewModel :: Model -> View Action
 viewModel model = either (const the404) id (runRoute @Route Proxy handler uri model)
   where
     the404 = div_ [] [text "Route not found"]
-    handler = renderView Home.render :<|> renderView Login.render
+    handler = renderView Home.render
+         -- This might not be feasible in the long run.
+         -- What happens if a handler needs access to the top level action?
+         :<|> renderView (fmap LoginAction Login.render)
 
 main :: IO ()
 main = do
