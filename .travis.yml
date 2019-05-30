@@ -15,5 +15,5 @@ env:
 
 script:
   # - nix run -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-$NIXPKGS.tar.gz nixpkgs.haskellPackages.hlint -c hlint src
-  - nix build -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-$NIXPKGS.tar.gz --option trusted-public-keys "masser-ebook-manager.cachix.org-1:mtFSkQ2MO5MvjUpulZoFKjKUIa8g8CTcdPVuJaPKS1w= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" --option binary-caches "https://masser-ebook-manager.cachix.org https://cache.nixos.org" -f ./release.nix
+  - nix build -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-$NIXPKGS.tar.gz --option trusted-public-keys "masser-ebook-manager.cachix.org-1:mtFSkQ2MO5MvjUpulZoFKjKUIa8g8CTcdPVuJaPKS1w= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" --option binary-caches "https://masser-ebook-manager.cachix.org https://cache.nixos.org" -f ./release.nix deps ghc.backend ghc.frontend ghcjs.frontend
   - "for x in result*; do echo $(readlink result); readlink result | cachix push masser-ebook-manager; done"
