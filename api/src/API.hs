@@ -18,6 +18,6 @@ instance ToJSON Version
 
 instance FromJSON Version
 
-data API route =
+newtype API route =
   API { getVersion :: route :- "version" :>  Get '[JSON] Version }
                deriving (Generic)

@@ -1,6 +1,5 @@
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE TypeApplications  #-}
 module Server
@@ -23,6 +22,8 @@ import           Servant.Auth.Server    as SAS
 import           Servant.Server.Generic
 
 import           API
+import           Data.Model.User
+import           Server.Auth
 import           Types
 
 handler :: API (AsServerT AppM)
@@ -33,7 +34,7 @@ handler = API {..}
 api :: Proxy (ToServantApi API)
 api = genericApi @API Proxy
 
-type Ctx = '[CookieSettings, JWTSettings]
+type Ctx = '[BasicAuthData -> IO (AuthResult (User Hidden)), CookieSettings, JWTSettings]
 
 application :: App -> Application
 application st = serveWithContext api ctx (hoistServerWithContext api (Proxy @Ctx) nat (genericServerT handler))
@@ -42,4 +43,4 @@ application st = serveWithContext api ctx (hoistServerWithContext api (Proxy @Ct
     cookieConfig = defaultCookieSettings{cookieIsSecure=NotSecure}
     jwtConfig = defaultJWTSettings (st ^. typed @JWK)
     ctx :: Context Ctx
-    ctx = cookieConfig :. jwtConfig :. EmptyContext
+    ctx = authenticate st :. cookieConfig :. jwtConfig :. EmptyContext

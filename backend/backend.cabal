@@ -19,6 +19,7 @@ extra-source-files:  CHANGELOG.md
 executable backend
   main-is:             Main.hs
   other-modules:       Server
+                     , Server.Auth
                      , Types
                      , DB.Migrations
                      , DB.Internal

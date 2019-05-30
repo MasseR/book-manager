@@ -39,7 +39,7 @@ viewModel m = div_ [] [ footer ]
   where
     footer = div_ [] [ viewVersion ]
     viewVersion :: View Action
-    viewVersion = span_ [] [ maybe (text "No connection") (text . toJSString) (m ^? field @"version" . _Just . field @"version") ]
+    viewVersion = span_ [] [ (text . maybe "No connection" toJSString) (m ^? field @"version" . _Just . field @"version") ]
 
 main :: IO ()
 main = do

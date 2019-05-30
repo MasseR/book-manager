@@ -43,4 +43,4 @@ validateHash :: Hash -> Password -> Bool
 validateHash (Hash a) (Password b) = BCrypt.validatePassword a (encodeUtf8 b)
 
 validateUser :: User Hash -> Password -> Bool
-validateUser User{secret} hash = validateHash secret hash
+validateUser User{secret} = validateHash secret
