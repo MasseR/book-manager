@@ -71,19 +71,19 @@ let
   ghc = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghccustom; };
   # ghcjs = pinnedPkgs.callPackage ./default.nix { nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
   ghcjs = import ./default.nix { lib = pinnedPkgs.lib; nixpkgs = pinnedPkgs; haskellPackages = pinnedPkgs.haskell.packages.ghcjscustom; };
+  mkDeps = deps: pkgs.buildEnv {
+    name = "deps";
+    paths = [ deps ];
+  };
   inherit (pinnedPkgs) pkgs;
 
   in
 
 {
   inherit ghc ghcjs;
-  deps = pkgs.buildEnv {
-    name = "deps";
-    paths = [
-      (pkgs.haskell.packages.ghccustom.ghcWithPackages (_: ghc.backend.buildInputs ++ ghc.backend.propagatedBuildInputs))
-      (pkgs.haskell.packages.ghcjscustom.ghcWithPackages (_: ghcjs.frontend.buildInputs ++ ghcjs.frontend.propagatedBuildInputs))
-      (pkgs.haskell.packages.ghcjscustom.ghcWithPackages (_: ghc.frontend.buildInputs ++ ghc.frontend.propagatedBuildInputs))
-    ];
-    buildInputs = [ ];
+  deps = {
+    backend = mkDeps (pkgs.haskell.packages.ghccustom.ghcWithPackages (_: ghc.backend.buildInputs ++ ghc.backend.propagatedBuildInputs));
+    frontend = mkDeps (pkgs.haskell.packages.ghcjscustom.ghcWithPackages (_: ghcjs.frontend.buildInputs ++ ghcjs.frontend.propagatedBuildInputs));
+    frontendDev = mkDeps (pkgs.haskell.packages.ghccustom.ghcWithPackages (_: ghc.frontend.buildInputs ++ ghc.frontend.propagatedBuildInputs));
   };
 }
