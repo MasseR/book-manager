@@ -82,6 +82,7 @@ let
     paths = [
       (pkgs.haskell.packages.ghccustom.ghcWithPackages (_: ghc.backend.buildInputs ++ ghc.backend.propagatedBuildInputs))
       (pkgs.haskell.packages.ghcjscustom.ghcWithPackages (_: ghcjs.frontend.buildInputs ++ ghcjs.frontend.propagatedBuildInputs))
+      (pkgs.haskell.packages.ghcjscustom.ghcWithPackages (_: ghc.frontend.buildInputs ++ ghc.frontend.propagatedBuildInputs))
     ];
     buildInputs = [ ];
   };
