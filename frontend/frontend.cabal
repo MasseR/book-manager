@@ -18,12 +18,13 @@ extra-source-files:  CHANGELOG.md
 
 executable frontend
   main-is:             Main.hs
-  -- other-modules:
+  other-modules:       Network.Client.HTTP
   -- other-extensions:
   build-depends:       base >=4.11 && <4.13
                      , api
                      , common
                      , generic-lens
+                     , aeson
                      , jsaddle-warp
                      , lens
                      , miso
