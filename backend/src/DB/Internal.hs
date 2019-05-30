@@ -5,6 +5,8 @@ module DB.Internal
   , SQL.Only(..)
   , SQL.Connection
   , SQL.withConnection
+  , SQL.ToRow(..)
+  , SQL.ToField(..)
   , HasDB(..)
   , WithDB
   , execute_
@@ -13,6 +15,7 @@ module DB.Internal
   where
 
 import qualified Database.SQLite.Simple as SQL
+import qualified Database.SQLite.Simple.ToField as SQL
 
 import MyPrelude
 

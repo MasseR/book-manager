@@ -1,10 +1,10 @@
+{-# LANGUAGE NamedFieldPuns    #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE NamedFieldPuns #-}
 module Main where
 
+import           DB.Internal                 (withConnection)
 import           DB.Migrations
-import DB.Internal (withConnection)
 import           MyPrelude
 import           Server
 import           Types
