@@ -39,5 +39,8 @@ executable backend
                      , cryptonite
                      , lens
                      , generic-lens
+                     , servant-auth
+                     , servant-auth-server
+                     , jose
   hs-source-dirs:      src
   default-language:    Haskell2010

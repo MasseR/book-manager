@@ -1,4 +1,6 @@
+{-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE TypeApplications  #-}
 module Server
@@ -6,14 +8,18 @@ module Server
   ) where
 
 import           Control.Exception      (try)
+import           Control.Lens           ((^.))
 import           Control.Monad.Except   (ExceptT (..))
 import           Control.Monad.Reader
+import           Crypto.JOSE.JWK        (JWK)
+import           Data.Generics.Product  (typed)
 import qualified Data.Text              as T
 import           Data.Version           (showVersion)
 import           MyPrelude
 import qualified Paths_backend
 import           Servant
 import           Servant.API.Generic
+import           Servant.Auth.Server    as SAS
 import           Servant.Server.Generic
 
 import           API
@@ -27,7 +33,13 @@ handler = API {..}
 api :: Proxy (ToServantApi API)
 api = genericApi @API Proxy
 
+type Ctx = '[CookieSettings, JWTSettings]
+
 application :: App -> Application
-application st = serve api (hoistServer api nat (genericServerT handler))
+application st = serveWithContext api ctx (hoistServerWithContext api (Proxy @Ctx) nat (genericServerT handler))
   where
     nat f = Handler . ExceptT . try $ runReaderT (runApp f) st
+    cookieConfig = defaultCookieSettings{cookieIsSecure=NotSecure}
+    jwtConfig = defaultJWTSettings (st ^. typed @JWK)
+    ctx :: Context Ctx
+    ctx = cookieConfig :. jwtConfig :. EmptyContext

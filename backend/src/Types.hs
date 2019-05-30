@@ -7,11 +7,14 @@ module Types
   ) where
 
 import           Control.Monad.Reader
+import           Crypto.JOSE.JWK      (JWK)
 import           GHC.Generics
 
-import DB.Internal
+import           DB.Internal
 
-newtype App = App { connection :: Connection }
+data App =
+  App { connection :: Connection
+      , jwtKey     :: JWK }
          deriving (Generic)
 
 instance HasDB App where
