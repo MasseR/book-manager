@@ -6,17 +6,20 @@ module MyPrelude
   , tshow
   , putStrLn
   , putStr
-  , void
+  , hush
   )
   where
 
 import           Control.Monad.Reader as X
 import qualified Data.ByteString      as B
 import qualified Data.ByteString.Lazy as LB
-import           Data.Maybe           as X (fromMaybe, maybe)
+import           Data.Maybe           as X (catMaybes, fromMaybe, maybe)
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as T
 import           Prelude              as X hiding (putStr, putStrLn, readFile)
+import           System.Directory     as X (getDirectoryContents)
+import           System.FilePath      as X
+import           Text.Read            as X (readMaybe)
 
 putStrLn, putStr :: X.MonadIO m => T.Text -> m ()
 putStrLn = X.liftIO . T.putStrLn
@@ -27,3 +30,6 @@ type LByteString = LB.ByteString
 
 tshow :: Show a => a -> T.Text
 tshow = T.pack . show
+
+hush :: Either e a -> Maybe a
+hush = either (const Nothing) Just

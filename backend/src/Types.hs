@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Types
   ( App(..)
@@ -6,11 +6,16 @@ module Types
   , runApp
   ) where
 
-import Control.Monad.Reader
-import GHC.Generics
+import           Control.Monad.Reader
+import           GHC.Generics
 
-data App = App
+import DB.Internal
+
+newtype App = App { connection :: Connection }
          deriving (Generic)
+
+instance HasDB App where
+  getConnection = connection
 
 newtype AppM a =
   AppM { runApp :: ReaderT App IO a }
