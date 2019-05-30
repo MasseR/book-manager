@@ -1,6 +1,8 @@
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Handler.Login
   ( Route
   , render
@@ -14,4 +16,6 @@ import           View
 type Route a = "login" :> View a
 
 render :: Page m a
-render = baseView
+render = baseView{content}
+  where
+    content _model = div_ [] [text "Login"]
