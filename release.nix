@@ -48,6 +48,7 @@ let
               jsaddle-warp = super.callPackage ./jsaddle-warp-ghcjs.nix {};
               jsaddle = dontCheck (super.callPackage (jsaddle + "/jsaddle") {});
               jsaddle-dom = super.callPackage jsaddle-dom {};
+              cryptonite = dontCheck (super.cryptonite);
               ghc = overrideDerivation (super.ghc.override {
                 ghcjsSrc = pkgs.fetchgit {
                   url = "https://github.com/ghcjs/ghcjs.git";
