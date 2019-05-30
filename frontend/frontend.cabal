@@ -26,6 +26,7 @@ executable frontend
                      , generic-lens
                      , aeson
                      , jsaddle-warp
+                     , text
                      , lens
                      , miso
                      , mtl
