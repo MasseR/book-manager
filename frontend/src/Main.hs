@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE LambdaCase        #-}
+{-# LANGUAGE NamedFieldPuns    #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
@@ -10,36 +10,34 @@
 {-# LANGUAGE TypeOperators     #-}
 module Main where
 
-import           API                              (Version)
-import           Control.Lens                     ((^?), _Just)
 import           Data.Aeson
-import           Data.Generics.Product            (field)
 import           Data.Proxy                       (Proxy (..))
-import           GHC.Generics                     (Generic)
-import           JSDOM.Types                      (MonadDOM, toJSString)
+import           JSDOM.Types                      (MonadDOM)
 import           Language.Javascript.JSaddle.Warp
 import           Miso
-import           MyPrelude
-import qualified Network.Client.HTTP              as HTTP
 import           Servant.API
 import           Servant.Links
 
-type Route = Home :<|> Login
-type Home = View Action
-type Login = "login" :> View Action
+import           API                              (Version)
+import           Model
+import           MyPrelude
+import qualified Network.Client.HTTP              as HTTP
+import           View                             (renderView)
+
+import qualified Handler.Home                     as Home
+import qualified Handler.Login                    as Login
+
+type Route = Home.Route Action :<|> Login.Route Action
 
 goHome :: Action
-goHome = goto @Home @Route Proxy Proxy
+goHome = goto @(Home.Route Action) @Route Proxy Proxy
 
 goLogin :: Action
-goLogin = goto @Login @Route Proxy Proxy
+goLogin = goto @(Login.Route Action) @Route Proxy Proxy
 
 goto :: (IsElem endpoint api, HasLink endpoint, MkLink endpoint Link ~ Link) => Proxy api -> Proxy endpoint -> Action
 goto a b = ChangeURI (linkURI (safeLink a b))
 
-data Model = Model { version :: Maybe Version
-                   , uri     :: URI }
-           deriving (Eq, Generic)
 
 data Action = Init
             | HandleURI URI
@@ -73,11 +71,10 @@ getLoginStatus = do
   pure (UpdateLoginStatus response)
 
 viewModel :: Model -> View Action
-viewModel m = div_ [] [ footer ]
+viewModel model = either (const the404) id (runRoute @Route Proxy handler uri model)
   where
-    footer = div_ [] [ viewVersion ]
-    viewVersion :: View Action
-    viewVersion = span_ [] [ (text . maybe "No connection" toJSString) (m ^? field @"version" . _Just . field @"version") ]
+    the404 = div_ [] [text "Route not found"]
+    handler = renderView Home.render :<|> renderView Login.render
 
 main :: IO ()
 main = do

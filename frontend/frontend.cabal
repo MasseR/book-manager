@@ -19,6 +19,10 @@ extra-source-files:  CHANGELOG.md
 executable frontend
   main-is:             Main.hs
   other-modules:       Network.Client.HTTP
+                     , View
+                     , Handler.Home
+                     , Handler.Login
+                     , Model
   -- other-extensions:
   build-depends:       base >=4.11 && <4.13
                      , api
@@ -32,6 +36,9 @@ executable frontend
                      , mtl
                      , servant
                      , jsaddle-dom
+                     , profunctors
+                     -- contravariant is in the newer base
+                     , contravariant
                      -- , jsaddle-dom
                      -- , ghcjs-dom
                      -- , servant-client-ghcjs
