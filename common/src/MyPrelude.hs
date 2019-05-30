@@ -6,6 +6,7 @@ module MyPrelude
   , tshow
   , putStrLn
   , putStr
+  , print
   , hush
   , ifM
   , boolM
@@ -21,7 +22,7 @@ import qualified Data.ByteString.Lazy as LB
 import           Data.Maybe           as X (catMaybes, fromMaybe, isJust, maybe)
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as T
-import           Prelude              as X hiding (putStr, putStrLn, readFile)
+import           Prelude              as X hiding (putStr, putStrLn, readFile, print)
 import           System.Directory     as X (getDirectoryContents)
 import           System.FilePath      as X
 import           Text.Read            as X (readMaybe)
@@ -29,6 +30,10 @@ import           Text.Read            as X (readMaybe)
 putStrLn, putStr :: X.MonadIO m => T.Text -> m ()
 putStrLn = X.liftIO . T.putStrLn
 putStr = X.liftIO . T.putStr
+
+print :: (X.MonadIO m, Show a) => a -> m ()
+print = putStrLn . tshow
+
 
 type ByteString = B.ByteString
 type LByteString = LB.ByteString

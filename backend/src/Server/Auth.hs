@@ -6,8 +6,10 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-} -- orphan instances because servant-auth-server has the classes I need
 module Server.Auth where
 
+import           Control.Monad.Catch
 import           Data.Bool           (bool)
 import           Data.Text.Encoding  (decodeUtf8)
+import           Servant             (err401)
 import           Servant.Auth.Server
 
 
@@ -34,3 +36,9 @@ authenticate app (BasicAuthData u p) = flip runReaderT app $ do
     authenticated User{..} = Authenticated User{secret=Hidden,..}
     verifyUser :: User Hash -> AuthResult (User Hidden)
     verifyUser user@User{..} = bool BadPassword (authenticated user) (validate user)
+
+requireUser :: (MonadIO m, MonadThrow m) => AuthResult (User p) -> (User p -> m a) -> m a
+requireUser user f =
+  case user of
+       Authenticated u -> f u
+       _               -> throwM err401
