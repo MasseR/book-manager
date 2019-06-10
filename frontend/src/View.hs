@@ -29,13 +29,6 @@ instance Profunctor Page where
          , footer = footer . g
          }
 
-baseView :: Page model a
-baseView = Page { .. }
-  where
-    header _model = [div_ [] [text "header"]]
-    content _model = [div_ [] [text "content"]]
-    footer _model = [div_ [] [text "footer"]]
-
 renderView :: Page model a -> model -> View a
 renderView Page{..} model =
   div_ [] [ div_ [class_ "header"] ( header model )

@@ -8,6 +8,7 @@
 {-# LANGUAGE TypeApplications  #-}
 {-# LANGUAGE TypeFamilies      #-}
 {-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE FlexibleContexts #-}
 module Main where
 
 import           Data.Aeson
@@ -15,14 +16,17 @@ import           Data.Proxy                       (Proxy (..))
 import           JSDOM.Types                      (MonadDOM)
 import           Language.Javascript.JSaddle.Warp
 import           Miso
-import           Servant.API
+import           Miso.String
+import           Servant.API                      hiding (header)
 import           Servant.Links
+import qualified Control.Lens as L
+import Data.Generics.Product
 
 import           API                              (Version)
 import           Model
 import           MyPrelude
 import qualified Network.Client.HTTP              as HTTP
-import           View                             (renderView)
+import           View                             (Page (..), renderView)
 
 import qualified Handler.Home                     as Home
 import qualified Handler.Login                    as Login
@@ -44,8 +48,10 @@ data Action = Init
             | ChangeURI URI
             | UpdateVersion (HTTP.Response (Maybe Version))
             | UpdateLoginStatus (HTTP.Response ByteString)
+            | HomeAction Home.Action
             | LoginAction Login.Action
             | NoOp
+            deriving (Generic)
 
 updateModel :: Model -> Action -> Effect Action Model
 updateModel m = \case
@@ -60,7 +66,8 @@ updateModel m = \case
   UpdateLoginStatus HTTP.Response{status=200} -> m <# pure goHome
   UpdateLoginStatus HTTP.Response{status=401} -> m <# pure goLogin
   UpdateLoginStatus HTTP.Response{status=_} -> noEff m
-  LoginAction act -> bimap LoginAction id (Login.updateModel m act)
+  LoginAction act -> bimap LoginAction (flip (L.set (typed @Login.Model)) m) (Login.updateModel (loginModel m) act)
+  HomeAction act -> bimap HomeAction (flip (L.set (typed @Home.Model)) m) (Home.updateModel (L.view (typed @Home.Model) m) act)
 
 getVersion :: MonadDOM m => m Action
 getVersion = do
@@ -72,14 +79,21 @@ getLoginStatus = do
   response <- HTTP.get "http://localhost:8088/users/login"
   pure (UpdateLoginStatus response)
 
+baseView :: Page Model Action
+baseView = Page{..}
+  where
+    header Model{title} = [h1_ [] [text (toMisoString title)]]
+    content _model = []
+    footer Model{version} = [div_ [] [text (toMisoString (show version))]]
+
 viewModel :: Model -> View Action
 viewModel model = either (const the404) id (runRoute @Route Proxy handler uri model)
   where
     the404 = div_ [] [text "Route not found"]
-    handler = renderView Home.render
+    handler = renderView (dimap homeModel HomeAction Home.render)
          -- This might not be feasible in the long run.
          -- What happens if a handler needs access to the top level action?
-         :<|> renderView (fmap LoginAction Login.render)
+         :<|> renderView (baseView <> dimap loginModel LoginAction Login.render)
 
 main :: IO ()
 main = do
@@ -89,7 +103,12 @@ main = do
     model <- mkModel
     startApp App{..}
   where
-    mkModel = Model <$> pure Nothing <*> getCurrentURI
+    mkModel = Model
+                <$> pure Nothing
+                <*> getCurrentURI
+                <*> pure "Home"
+                <*> Home.initialModel
+                <*> Login.initialModel
     update = flip updateModel
     view = viewModel
     subs = [ uriSub HandleURI ]

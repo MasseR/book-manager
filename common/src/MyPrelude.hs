@@ -1,5 +1,6 @@
 module MyPrelude
   ( module X
+  , Generic
   , ByteString
   , LByteString
   , T.Text
@@ -21,8 +22,10 @@ import           Data.Bool            as X (bool)
 import qualified Data.ByteString      as B
 import qualified Data.ByteString.Lazy as LB
 import           Data.Maybe           as X (catMaybes, fromMaybe, isJust, maybe)
+import           Data.Profunctor      as X
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as T
+import           GHC.Generics         (Generic)
 import           Prelude              as X hiding (print, putStr, putStrLn,
                                             readFile)
 import           System.Directory     as X (getDirectoryContents)
