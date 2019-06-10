@@ -28,6 +28,6 @@ updateModel m _ = noEff m
 render :: Page m Action
 render = baseView{content}
   where
-    content _model = div_ [] [form_ [] [ username, password ]]
+    content _model = [div_ [] [form_ [] [ username, password ]]]
     username = input_ [placeholder_ "Username"]
     password = input_ [placeholder_ "Password"]
