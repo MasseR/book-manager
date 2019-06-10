@@ -17,7 +17,7 @@ data Page model a =
 instance Semigroup (Page model action) where
   l <> r = Page { header = \m -> header l m <> header r m
                 , content = \m -> content l m <> content r m
-                , footer = \m -> footer l m <> content r m
+                , footer = \m -> footer l m <> footer r m
                 }
 
 

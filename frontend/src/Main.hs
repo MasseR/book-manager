@@ -9,6 +9,7 @@
 {-# LANGUAGE TypeFamilies      #-}
 {-# LANGUAGE TypeOperators     #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RankNTypes #-}
 module Main where
 
 import           Data.Aeson
@@ -53,6 +54,10 @@ data Action = Init
             | NoOp
             deriving (Generic)
 
+lensed :: (action -> Action) -> L.Lens' Model model -> Model -> (model -> action -> Effect action model) -> action -> Effect Action Model
+lensed a l m f act =
+  bimap a (\x -> L.set l x m) (f (L.view l m) act)
+
 updateModel :: Model -> Action -> Effect Action Model
 updateModel m = \case
   NoOp -> noEff m
@@ -66,8 +71,8 @@ updateModel m = \case
   UpdateLoginStatus HTTP.Response{status=200} -> m <# pure goHome
   UpdateLoginStatus HTTP.Response{status=401} -> m <# pure goLogin
   UpdateLoginStatus HTTP.Response{status=_} -> noEff m
-  LoginAction act -> bimap LoginAction (flip (L.set (typed @Login.Model)) m) (Login.updateModel (loginModel m) act)
-  HomeAction act -> bimap HomeAction (flip (L.set (typed @Home.Model)) m) (Home.updateModel (L.view (typed @Home.Model) m) act)
+  LoginAction act -> lensed LoginAction (typed @Login.Model) m Login.updateModel act
+  HomeAction act -> lensed HomeAction (typed @Home.Model) m Home.updateModel act
 
 getVersion :: MonadDOM m => m Action
 getVersion = do
