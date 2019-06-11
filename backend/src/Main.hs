@@ -23,4 +23,5 @@ main = withConnection "/tmp/book-manager.sqlite" $ \connection -> do
   runReaderT (runMigration Nothing) app
 
   putStrLn $ "Running on port " <> tshow port
-  run port (simpleCors $ application app)
+  let customCors = cors (const $ Just simpleCorsResourcePolicy{corsRequestHeaders="Authorization": simpleHeaders})
+  run port (customCors $ application app)

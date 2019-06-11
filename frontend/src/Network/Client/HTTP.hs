@@ -32,8 +32,9 @@ get' :: (MonadDOM m) => String -> String -> String -> m (Response ByteString)
 get' url username password = do
   let auth = "Basic " <> B64.encode (B.pack username <> ":" <> B.pack password)
   req <- newXMLHttpRequest
-  openSimple @_ @String req "GET" url
-  setRequestHeader @_ @String req "Authorization" (B.unpack auth)
+  _ <- openSimple @_ @String req "GET" url
+  putStrLn (tshow auth)
+  _ <- setRequestHeader @_ @String req "Authorization" (B.unpack auth)
   send req
   Response
     <$> (fmap encodeUtf8 <$> getResponseText req)
