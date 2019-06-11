@@ -27,7 +27,8 @@ instance FromJWT (User Hidden)
 instance ToJWT (User Hidden)
 
 authenticate :: App -> BasicAuthData -> IO (AuthResult (User Hidden))
-authenticate app (BasicAuthData u p) = flip runReaderT app $
+authenticate app (BasicAuthData u p) = flip runReaderT app $ do
+  putStrLn $ "Trying to log in as " <> tshow u
   maybe NoSuchUser verifyUser <$> getUser (Username (decodeUtf8 u))
   where
     validate user = validateUser user (Password (decodeUtf8 p))

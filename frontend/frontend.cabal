@@ -30,6 +30,7 @@ executable frontend
                      , generic-lens
                      , aeson
                      , jsaddle-warp
+                     , jsaddle
                      , text
                      , lens
                      , miso
@@ -37,6 +38,8 @@ executable frontend
                      , servant
                      , jsaddle-dom
                      , profunctors
+                     , base64-bytestring
+                     , bytestring
                      -- contravariant is in the newer base
                      , contravariant
                      -- , jsaddle-dom

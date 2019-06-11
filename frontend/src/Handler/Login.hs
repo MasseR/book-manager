@@ -18,14 +18,17 @@ module Handler.Login
 import           Miso
 import           Miso.String
 import           Servant.API hiding (header)
+import           JSDOM.Types                 (FromJSString(..))
 
 import           MyPrelude
 import           View
+import Network.Client.HTTP (Response, get')
 
 type Route = "login" :> View Action
 
 data Action = SetUsername JSString
             | SetPassword JSString
+            | Login (Response ByteString)
             | Submit
             | NoOp
 
@@ -41,7 +44,10 @@ updateModel m = \case
   SetUsername t -> noEff (m{username=t})
   SetPassword t -> noEff (m{password=t})
   Submit -> m <# do
-    putStrLn $ "Submitting: " <> tshow m
+    putStrLn "foo"
+    Login <$> get' "http://localhost:8088/users/login" (fromJSString $ username m) (fromJSString $ password m)
+  Login r -> m <# do
+    putStrLn $ "Login? " <> tshow r
     pure NoOp
 
 initialModel :: Monad m => m Model
