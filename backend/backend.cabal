@@ -28,9 +28,9 @@ executable backend
   -- other-extensions:
   build-depends:       base >=4.11 && <4.13
                      , api
-                     , common
                      , servant-server
                      , servant
+                     , masse-prelude
                      , mtl
                      , text
                      , warp
