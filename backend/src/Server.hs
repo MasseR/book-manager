@@ -6,7 +6,6 @@ module Server
   ( application
   ) where
 
-import           Control.Exception      (try)
 import           Control.Lens           ((^.))
 import           Control.Monad.Except   (ExceptT (..))
 import           Control.Monad.Reader

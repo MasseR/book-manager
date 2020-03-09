@@ -14,5 +14,6 @@ import           Data.Model.User
 
 data API route =
   API { postUser :: route :- "create" :> ReqBody '[JSON] (User Password) :> Post '[JSON] NoContent
-      , getLogin :: route :- Authorized :> "login" :> Get '[JSON] NoContent}
+      -- , getLogin :: route :- Authorized :> "login" :> Get '[JSON] NoContent
+      }
   deriving (Generic)

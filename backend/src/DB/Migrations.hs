@@ -5,10 +5,16 @@
 module DB.Migrations where
 
 import           Control.Exception
+import           Control.Monad     (when)
 import qualified Data.Text.IO      as T
+import           Text.Read         (readMaybe)
 
 import           DB.Internal
-import           MyPrelude
+import           MyPrelude         hiding (try)
+
+
+import           System.Directory  (getDirectoryContents)
+import           System.FilePath   (takeExtension, takeFileName, (</>))
 
 data Migration = Migration { version   :: Int
                            , migration :: Query }
@@ -17,6 +23,9 @@ data Migration = Migration { version   :: Int
 -- XXX: Testing candidate
 parseIdx :: FilePath -> Maybe Int
 parseIdx = readMaybe . takeWhile (/= '_') . takeFileName
+
+hush :: Either e a -> Maybe a
+hush = either (const Nothing) Just
 
 getQuery :: MonadIO m => FilePath -> m (Maybe Migration)
 getQuery path = liftIO $ do
