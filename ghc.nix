@@ -40,7 +40,7 @@ rec {
       stylish-haskell
       hlint
       binutils
-      (haskell.packages.ghc865.ghcWithHoogle (_: backend.buildInputs ++ backend.propagatedBuildInputs))
+      (haskell.packages.ghc865.ghcWithHoogle (_: backend.buildInputs ++ backend.propagatedBuildInputs ++ api.buildInputs ++ api.propagatedBuildInputs))
     ];
   };
 }
