@@ -4,7 +4,7 @@ import           Servant
 import           Servant.Server.Generic
 
 import           API.Users              (API (..))
-import           DB.Users
+import           Database.Users
 import           MyPrelude
 import           Control.Monad.App
 

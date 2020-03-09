@@ -5,7 +5,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-} -- orphan instances because I don't want sqlite dependency on api
-module DB.Users
+module Database.Users
   ( User(..)
   , insertUser
   , getUser
@@ -14,7 +14,7 @@ module DB.Users
   where
 
 import           Data.Model.User
-import           DB.Internal
+import           Database.Internal
 import           MyPrelude
 
 import qualified Crypto.KDF.BCrypt   as BCrypt

@@ -1,16 +1,18 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE TypeApplications #-}
 module Data.Environment where
 
 import           Crypto.JOSE.JWK (JWK)
-import           DB.Internal     (Connection, HasDB (..))
+import           Database.Internal     (Connection, HasConnection (..))
 
 import           GHC.Generics    (Generic)
+import Data.Generics.Product
 
 data Environment =
-  Environment { connection :: Connection
-              , jwtKey     :: JWK
+  Environment { envConnection :: Connection
+              , envKey        :: JWK
               }
   deriving (Generic)
 
-instance HasDB Environment where
-  getConnection = connection
+instance HasConnection Environment where
+  connection = typed @Connection

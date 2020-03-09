@@ -3,8 +3,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           DB.Internal                 (withConnection)
-import           DB.Migrations
+import           Database.Internal                 (withConnection)
+import           Database.Migrations
 import           MyPrelude
 import           Server
 import           Data.Environment
@@ -17,8 +17,8 @@ main :: IO ()
 main = withConnection "/tmp/book-manager.sqlite" $ \connection -> do
   jwtKey <- generateKey
   let port = 8088
-      app = Environment { connection
-                        , jwtKey }
+      app = Environment { envConnection = connection
+                        , envKey = jwtKey }
 
   runReaderT (runMigration Nothing) app
 

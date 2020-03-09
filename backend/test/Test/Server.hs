@@ -9,9 +9,9 @@ import           Data.Generics.Product
 import           Network.Wai.Handler.Warp (testWithApplication)
 import qualified Paths_backend
 
-import           DB.Internal              (withConnection)
-import           Servant.Auth.Server      (generateKey)
 import           Data.Environment
+import           Database.Internal        (withConnection)
+import           Servant.Auth.Server      (generateKey)
 
 import           API                      (getVersion)
 import           Client

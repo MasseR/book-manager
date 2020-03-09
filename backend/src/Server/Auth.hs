@@ -12,7 +12,7 @@ import           Servant.Auth.Server
 
 
 import           Data.Model.User
-import           DB.Users
+import           Database.Users
 import           MyPrelude
 import Data.Environment (Environment)
 -- import           Types

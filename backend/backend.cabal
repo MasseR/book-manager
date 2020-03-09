@@ -22,10 +22,10 @@ library
                        , Server.Users
                        , Control.Monad.App
                        , Data.Environment
-                       , DB.Migrations
-                       , DB.Internal
-                       , DB
-                       , DB.Users
+                       , Database.Migrations
+                       , Database.Internal
+                       , Database
+                       , Database.Users
   other-modules:       Paths_backend
   build-depends:       base >=4.11 && <4.13
                      , api

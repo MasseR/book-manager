@@ -2,14 +2,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE TypeApplications  #-}
-module DB.Migrations where
+module Database.Migrations where
 
 import           Control.Exception
 import           Control.Monad     (when)
 import qualified Data.Text.IO      as T
 import           Text.Read         (readMaybe)
 
-import           DB.Internal
+import           Database.Internal
 import           MyPrelude         hiding (try)
 
 
