@@ -4,6 +4,7 @@
 {-# LANGUAGE TypeApplications  #-}
 module Server
   ( application
+  , currentVersion
   ) where
 
 import           Control.Lens           ((^.))
@@ -30,8 +31,11 @@ import qualified Server.Users           as Users
 handler :: API (AsServerT AppM)
 handler = API {..}
   where
-    getVersion = pure (Version (T.pack . showVersion $ Paths_backend.version))
+    getVersion = pure currentVersion
     users = toServant Users.handler
+
+currentVersion :: Version
+currentVersion = Version Paths_backend.version
 
 api :: Proxy (ToServantApi API)
 api = genericApi @API Proxy

@@ -16,7 +16,8 @@ import           DB.Internal
 
 data App =
   App { connection :: Connection
-      , jwtKey     :: JWK }
+      , jwtKey     :: JWK
+      }
          deriving (Generic)
 
 instance HasDB App where
