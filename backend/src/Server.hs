@@ -22,9 +22,10 @@ import           Servant.Auth.Server    as SAS
 import           Servant.Server.Generic
 
 import           API
+import           Control.Monad.App
+import           Data.Environment
 import           Data.Model.User
 import           Server.Auth
-import           Types
 
 import qualified Server.Users           as Users
 
@@ -42,10 +43,10 @@ api = genericApi @API Proxy
 
 type Ctx = '[BasicAuthData -> IO (AuthResult (User Hidden)), CookieSettings, JWTSettings]
 
-application :: App -> Application
+application :: Environment -> Application
 application st = serveWithContext api ctx (hoistServerWithContext api (Proxy @Ctx) nat (genericServerT handler))
   where
-    nat f = Handler . ExceptT . try $ runReaderT (runApp f) st
+    nat = Handler . ExceptT . try . runAppM st
     cookieConfig = defaultCookieSettings{cookieIsSecure=NotSecure}
     jwtConfig = defaultJWTSettings (st ^. typed @JWK)
     ctx :: Context Ctx

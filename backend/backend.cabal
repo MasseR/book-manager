@@ -20,7 +20,8 @@ library
   exposed-modules:       Server
                        , Server.Auth
                        , Server.Users
-                       , Types
+                       , Control.Monad.App
+                       , Data.Environment
                        , DB.Migrations
                        , DB.Internal
                        , DB
@@ -31,6 +32,7 @@ library
                      , servant-server
                      , servant
                      , masse-prelude
+                     , unliftio
                      , mtl
                      , text
                      , warp

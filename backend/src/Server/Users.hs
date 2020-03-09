@@ -6,7 +6,7 @@ import           Servant.Server.Generic
 import           API.Users              (API (..))
 import           DB.Users
 import           MyPrelude
-import           Types
+import           Control.Monad.App
 
 handler :: API (AsServerT AppM)
 handler =

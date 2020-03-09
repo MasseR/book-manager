@@ -7,7 +7,7 @@ import           DB.Internal                 (withConnection)
 import           DB.Migrations
 import           MyPrelude
 import           Server
-import           Types
+import           Data.Environment
 
 import           Network.Wai.Handler.Warp    (run)
 import           Network.Wai.Middleware.Cors
@@ -17,8 +17,8 @@ main :: IO ()
 main = withConnection "/tmp/book-manager.sqlite" $ \connection -> do
   jwtKey <- generateKey
   let port = 8088
-      app = App { connection
-                , jwtKey }
+      app = Environment { connection
+                        , jwtKey }
 
   runReaderT (runMigration Nothing) app
 

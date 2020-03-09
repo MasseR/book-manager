@@ -14,7 +14,8 @@ import           Servant.Auth.Server
 import           Data.Model.User
 import           DB.Users
 import           MyPrelude
-import           Types
+import Data.Environment (Environment)
+-- import           Types
 
 type instance BasicAuthCfg = BasicAuthData -> IO (AuthResult (User Hidden))
 
@@ -24,9 +25,8 @@ instance FromBasicAuthData (User Hidden) where
 instance FromJWT (User Hidden)
 instance ToJWT (User Hidden)
 
-authenticate :: App -> BasicAuthData -> IO (AuthResult (User Hidden))
-authenticate app (BasicAuthData u p) = flip runReaderT app $ do
-  putStrLn "foo"
+authenticate :: Environment -> BasicAuthData -> IO (AuthResult (User Hidden))
+authenticate app (BasicAuthData u p) = flip runReaderT app $
   maybe NoSuchUser verifyUser <$> getUser (Username (decodeUtf8 u))
   where
     validate user = validateUser user (Password (decodeUtf8 p))
